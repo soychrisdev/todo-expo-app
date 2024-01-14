@@ -1,9 +1,13 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { DarkTheme, DefaultTheme, Link, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { SplashScreen, Stack } from 'expo-router';
 import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
+import { QueryClient, QueryClientProvider, useIsFetching, useQueryClient } from 'react-query';
+import "../globals.css";
+import { RootSiblingParent } from 'react-native-root-siblings';
+import { Text, View } from '../components/Themed';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -44,13 +48,18 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
-
+  const queryClient = new QueryClient();
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-      </Stack>
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <RootSiblingParent>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+            <Stack.Screen name="[id]" options={{ title: "Tareas por Proyecto", headerRight: ({ }) => (<><Text>asd</Text></>), headerLeft: ({ canGoBack }) => (<><Link to={'/'}>Back</Link></>) }} />
+          </Stack>
+        </ThemeProvider>
+      </RootSiblingParent>
+    </QueryClientProvider>
   );
 }
